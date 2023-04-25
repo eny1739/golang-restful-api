@@ -58,6 +58,11 @@ func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
+
+	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	helper.PanicIfError(err)
+
+	return helper.ToCategoryResponse(category)
 }
 
 func (service *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
