@@ -33,10 +33,10 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, request web.Cate
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
 
-	category := domain.Category{
-		Id:   request.Id,
-		Name: request.Name,
-	}
+	category, err := service.CategoryRepository.FindById(ctx, tx, request.Id)
+	helper.PanicIfError(err)
+
+	category.Name = request.Name
 
 	category = service.CategoryRepository.Update(ctx, tx, category)
 
@@ -47,6 +47,11 @@ func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) 
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
+
+	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
+	helper.PanicIfError(err)
+
+	service.CategoryRepository.Delete(ctx, tx, category)
 }
 
 func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int) web.CategoryResponse {
