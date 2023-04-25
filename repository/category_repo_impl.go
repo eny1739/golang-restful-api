@@ -54,6 +54,16 @@ func (repository *CategoryRepoImpl) FindById(ctx context.Context, tx *sql.Tx, ca
 }
 
 func (repository *CategoryRepoImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Category {
-	//TODO implement me
-	panic("implement me")
+	SQL := "select id, name from category"
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+
+	var categories []domain.Category
+	for rows.Next() {
+		category := domain.Category{}
+		err := rows.Scan(&category.Id, &category.Name)
+		helper.PanicIfError(err)
+		categories = append(categories, category)
+	}
+	return categories
 }
