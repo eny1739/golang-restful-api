@@ -32,6 +32,15 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, request web.Cate
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
+
+	category := domain.Category{
+		Id:   request.Id,
+		Name: request.Name,
+	}
+
+	category = service.CategoryRepository.Update(ctx, tx, category)
+
+	return helper.ToCategoryResponse(category)
 }
 
 func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) {
