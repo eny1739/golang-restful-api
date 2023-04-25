@@ -69,4 +69,7 @@ func (service *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryR
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
 	defer helper.CommitOrRollback(tx)
+	categories := service.CategoryRepository.FindAll(ctx, tx)
+
+	return helper.ToCategoryResponses(categories)
 }
