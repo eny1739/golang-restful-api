@@ -62,15 +62,52 @@ func (controller *CategoryControllerImpl) Update(writer http.ResponseWriter, req
 
 func (controller *CategoryControllerImpl) Delete(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//TODO implement me
-	panic("implement me")
+	categoryId := params.ByName("categoryId")
+	id, err := strconv.Atoi(categoryId)
+	helper.PanicIfError(err)
+
+	controller.CategoryService.Delete(request.Context(), id)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	writer.Header().Add("Content-Type", "application/json")
+	encoder := json.NewEncoder(writer)
+	err = encoder.Encode(webResponse)
+	helper.PanicIfError(err)
 }
 
 func (controller *CategoryControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//TODO implement me
-	panic("implement me")
+	categoryId := params.ByName("categoryId")
+	id, err := strconv.Atoi(categoryId)
+	helper.PanicIfError(err)
+
+	categoryResponse := controller.CategoryService.FindById(request.Context(), id)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   categoryResponse,
+	}
+
+	writer.Header().Add("Content-Type", "application/json")
+	encoder := json.NewEncoder(writer)
+	err = encoder.Encode(webResponse)
+	helper.PanicIfError(err)
 }
 
 func (controller *CategoryControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	//TODO implement me
-	panic("implement me")
+	categoryResponses := controller.CategoryService.FindAll(request.Context())
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   categoryResponses,
+	}
+
+	writer.Header().Add("Content-Type", "application/json")
+	encoder := json.NewEncoder(writer)
+	err := encoder.Encode(webResponse)
+	helper.PanicIfError(err)
 }
