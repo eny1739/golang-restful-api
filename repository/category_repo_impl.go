@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"golang-restful-api/helper"
 	"golang-restful-api/model/domain"
 )
@@ -17,18 +16,16 @@ func NewCategoryRepo() CategoryRepository {
 }
 
 func (repository *CategoryRepoImpl) Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	var lastid int
-	name := category.Name
-	fmt.Print(name)
+	var lastId int
 	SQL := `insert into mst_category.public.category(name) values ($1) returning id`
-	err := tx.QueryRowContext(ctx, SQL, category.Name).Scan(&lastid)
+	err := tx.QueryRowContext(ctx, SQL, category.Name).Scan(&lastId)
 	helper.PanicIfError(err)
-	category.Id = lastid
+	category.Id = lastId
 	return category
 }
 
 func (repository *CategoryRepoImpl) Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	SQL := "update category set name = ? where id = ?"
+	SQL := "update category set name = $1 where id = $2"
 	_, err := tx.ExecContext(ctx, SQL, category.Name, category.Id)
 	helper.PanicIfError(err)
 
@@ -36,13 +33,13 @@ func (repository *CategoryRepoImpl) Update(ctx context.Context, tx *sql.Tx, cate
 }
 
 func (repository *CategoryRepoImpl) Delete(ctx context.Context, tx *sql.Tx, category domain.Category) {
-	SQL := "delete from category where id = ?"
+	SQL := "delete from category where id = $1"
 	_, err := tx.ExecContext(ctx, SQL, category.Id)
 	helper.PanicIfError(err)
 }
 
 func (repository *CategoryRepoImpl) FindById(ctx context.Context, tx *sql.Tx, categoryId int) (domain.Category, error) {
-	SQL := "select id, name from category where id = ?"
+	SQL := "select id, name from category where id = $1"
 	rows, err := tx.QueryContext(ctx, SQL, categoryId)
 	helper.PanicIfError(err)
 
