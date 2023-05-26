@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ### get by id
-GET http://localhost:3000/api/categories/12
+GET http://localhost:3000/api/categories/120
 Accept: application/json
 
 
