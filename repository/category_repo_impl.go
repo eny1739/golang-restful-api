@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"golang-restful-api/helper"
 	"golang-restful-api/model/domain"
 )
@@ -16,14 +17,13 @@ func NewCategoryRepo() CategoryRepository {
 }
 
 func (repository *CategoryRepoImpl) Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	SQL := "insert into category (name) values (?)"
-	result, err := tx.ExecContext(ctx, SQL, category.Name)
+	var lastid int
+	name := category.Name
+	fmt.Print(name)
+	SQL := `insert into mst_category.public.category(name) values ($1) returning id`
+	err := tx.QueryRowContext(ctx, SQL, category.Name).Scan(&lastid)
 	helper.PanicIfError(err)
-
-	id, err := result.LastInsertId()
-	helper.PanicIfError(err)
-
-	category.Id = int(id)
+	category.Id = lastid
 	return category
 }
 
